@@ -2,7 +2,8 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
-  site: 'https://help.supervertaler.com',
+  site: 'https://supervertaler.github.io',
+  base: '/Supervertaler-Workbench-v2/',
   integrations: [
     starlight({
       title: 'Supervertaler Workbench',
