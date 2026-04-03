@@ -1,0 +1,34 @@
+---
+title: Supervertaler Workbench 2.0
+description: Help documentation for Supervertaler Workbench – a free, open-source AI translation workbench.
+template: splash
+hero:
+  title: Supervertaler Workbench 2.0
+  tagline: A free, open-source AI translation workbench. Built to work alongside your CAT tool.
+  actions:
+    - text: Get Started
+      link: /getting-started/introduction/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/Supervertaler/Supervertaler-Workbench-v2
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid stagger>
+  <Card title="Open bilingual files" icon="document">
+    Opens XLIFF, SDLXLIFF (Trados), and MQXLIFF (memoQ) files directly. Work on translations created in other CAT tools.
+  </Card>
+  <Card title="Inline tag visualization" icon="setting">
+    Three display modes for inline formatting tags – from minimal markers to full XML. Just like Trados Studio.
+  </Card>
+  <Card title="AI-powered translation" icon="rocket">
+    Connect to OpenAI, Anthropic, DeepL, or local models via Ollama. Translate single segments or entire files.
+  </Card>
+  <Card title="Free and open source" icon="open-book">
+    MIT licence. No subscriptions, no telemetry, no vendor lock-in. Your translations stay on your machine.
+  </Card>
+</CardGrid>

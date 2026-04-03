@@ -1,0 +1,15 @@
+/* Supervertaler Workbench – docs custom styles */
+
+:root {
+  /* Subtle purple accent to match Supervertaler branding */
+  --sl-color-accent-low: #e8e0f4;
+  --sl-color-accent: #7c3aed;
+  --sl-color-accent-high: #4c1d95;
+  --sl-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+:root[data-theme='dark'] {
+  --sl-color-accent-low: #2e1065;
+  --sl-color-accent: #a78bfa;
+  --sl-color-accent-high: #e8e0f4;
+}
