@@ -4,7 +4,7 @@ import { PanelLayout } from './PanelLayout';
 
 export function AppLayout() {
   return (
-    <div className="flex flex-col h-screen bg-white dark:bg-gray-900">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       <MenuBar />
       <PanelLayout />
       <StatusBar />

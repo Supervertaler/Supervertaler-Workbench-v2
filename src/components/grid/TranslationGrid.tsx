@@ -1,14 +1,17 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import type { ColDef, CellEditingStoppedEvent, RowClickedEvent } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
 import { useSegmentStore } from '../../store/segmentStore';
 import { useSettingsStore } from '../../store/settingsStore';
 import { StatusCellRenderer } from './StatusCellRenderer';
 import { MatchPercentageBadge } from './MatchPercentageBadge';
+import { SourceTextRenderer, TargetTextRenderer } from './TaggedTextRenderer';
 import type { Segment } from '../../types/segment';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
+
+const myTheme = themeQuartz;
 
 export function TranslationGrid() {
   const gridRef = useRef<AgGridReact>(null);
@@ -40,6 +43,7 @@ export function TranslationGrid() {
         wrapText: true,
         autoHeight: true,
         editable: false,
+        cellRenderer: SourceTextRenderer,
       },
       {
         headerName: 'Target',
@@ -49,6 +53,7 @@ export function TranslationGrid() {
         autoHeight: true,
         editable: true,
         cellStyle: { cursor: 'text' },
+        cellRenderer: TargetTextRenderer,
       },
       {
         headerName: '%',
@@ -90,7 +95,7 @@ export function TranslationGrid() {
   );
 
   return (
-    <div className="flex-1" style={{ fontSize: `${fontSize}px` }}>
+    <div style={{ width: '100%', height: '100%', fontSize: `${fontSize}px` }}>
       <AgGridReact<Segment>
         ref={gridRef}
         rowData={segments}
@@ -101,8 +106,7 @@ export function TranslationGrid() {
         onCellEditingStopped={onCellEditingStopped}
         rowSelection="single"
         suppressMovableColumns
-        domLayout="normal"
-        theme="legacy"
+        theme={myTheme}
       />
     </div>
   );

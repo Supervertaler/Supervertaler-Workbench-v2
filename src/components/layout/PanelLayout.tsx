@@ -8,9 +8,9 @@ export function PanelLayout() {
   const showTermLens = useUiStore((s) => s.showTermLens);
 
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
       {/* Main grid area */}
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div style={{ flex: 1, minHeight: 0, minWidth: 0 }}>
         <TranslationGrid />
       </div>
 

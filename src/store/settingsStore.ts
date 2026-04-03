@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { TagDisplayMode } from '../types/segment';
 
 interface Settings {
   general: {
@@ -7,6 +8,7 @@ interface Settings {
     autoCenterActiveSegment: boolean;
     gridFontSize: number;
     enableSoundEffects: boolean;
+    tagDisplayMode: TagDisplayMode;
   };
   apiKeys: Record<string, string>;
   ui: {
@@ -27,6 +29,7 @@ const defaultSettings: Settings = {
     autoCenterActiveSegment: true,
     gridFontSize: 11,
     enableSoundEffects: false,
+    tagDisplayMode: 'partial' as TagDisplayMode,
   },
   apiKeys: {},
   ui: {

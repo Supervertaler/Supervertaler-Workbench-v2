@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file original="test-document.docx" source-language="en-US" target-language="nl-NL" datatype="plaintext">
+    <header>
+      <tool tool-id="supervertaler" tool-name="Supervertaler Workbench" tool-version="2.0.0"/>
+    </header>
+    <body>
+      <trans-unit id="1">
+        <source>The quick brown fox jumps over the lazy dog.</source>
+        <target>De snelle bruine vos springt over de luie hond.</target>
+      </trans-unit>
+      <trans-unit id="2">
+        <source>Introduction</source>
+        <target>Inleiding</target>
+      </trans-unit>
+      <trans-unit id="3">
+        <source>This document describes the technical specifications for the new product line.</source>
+        <target></target>
+      </trans-unit>
+      <trans-unit id="4">
+        <source>All measurements are in millimetres unless stated otherwise.</source>
+        <target></target>
+      </trans-unit>
+      <trans-unit id="5">
+        <source>Please refer to the appendix for additional information.</source>
+        <target>Raadpleeg de bijlage voor aanvullende informatie.</target>
+      </trans-unit>
+      <trans-unit id="6">
+        <source>The project was completed ahead of schedule.</source>
+        <target></target>
+      </trans-unit>
+      <trans-unit id="7">
+        <source>Quality assurance testing revealed no critical defects.</source>
+        <target>Kwaliteitsborgingstests hebben geen kritieke gebreken aan het licht gebracht.</target>
+      </trans-unit>
+      <trans-unit id="8">
+        <source>The final report will be submitted by Friday.</source>
+        <target></target>
+      </trans-unit>
+      <trans-unit id="9">
+        <source>Thank you for your cooperation.</source>
+        <target>Dank u voor uw medewerking.</target>
+      </trans-unit>
+      <trans-unit id="10">
+        <source>For further questions, please contact the project manager.</source>
+        <target></target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,9 +1,9 @@
-export interface InlineTag {
-  type: 'b' | 'i' | 'u' | 's' | 'sup' | 'sub' | 'cf' | 'placeholder';
-  id: string;
-  content?: string;
-  position: number;
-}
+/** A content part: either plain text or a tag marker */
+export type ContentPart =
+  | { type: 'text'; text: string }
+  | { type: 'tag_open'; id: string; tag_type: string; display: string }
+  | { type: 'tag_close'; id: string; tag_type: string; display: string }
+  | { type: 'standalone'; id: string; tag_type: string; display: string };
 
 export interface Comment {
   author: string;
@@ -20,6 +20,9 @@ export type SegmentStatus =
   | 'rejected'
   | 'locked';
 
+/** Tag display mode matching Trados Studio's three modes */
+export type TagDisplayMode = 'none' | 'partial' | 'full';
+
 export interface Segment {
   id: number;
   segmentNumber: number;
@@ -28,8 +31,8 @@ export interface Segment {
   status: SegmentStatus;
   matchPercentage: number | null;
   matchOrigin: string | null;
-  sourceInlineTags: InlineTag[];
-  targetInlineTags: InlineTag[];
+  sourceParts: ContentPart[];
+  targetParts: ContentPart[];
   notes: string | null;
   createdBy: string | null;
   modifiedBy: string | null;

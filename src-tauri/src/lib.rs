@@ -1,4 +1,9 @@
 mod commands;
+mod db;
+mod matching;
+mod parsers;
+
+use commands::project::AppState;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -7,9 +12,10 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
+        .manage(AppState::default())
         .invoke_handler(tauri::generate_handler![
             commands::project::load_project,
-            commands::segments::get_segments,
+            commands::project::get_segments,
             commands::segments::save_segment,
             commands::tm::get_tm_matches,
             commands::termbase::lookup_terms,
