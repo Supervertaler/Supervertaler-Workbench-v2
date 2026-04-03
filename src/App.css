@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* AG Grid sizing fix for Tailwind */
+.ag-theme-alpine,
+.ag-theme-quartz {
+  --ag-font-size: inherit;
+}
