@@ -16,6 +16,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::project::load_project,
             commands::project::get_segments,
+            commands::project::save_project,
             commands::segments::save_segment,
             commands::tm::get_tm_matches,
             commands::termbase::lookup_terms,

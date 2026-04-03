@@ -115,11 +115,25 @@ pub fn parse_xliff(content: &str) -> Result<XliffFile, String> {
     let mut in_inline_tag: Option<InlineTagContext> = None;
     let mut inline_tag_text = String::new();
 
+    // MemoQ MQXLIFF files contain <mq:minorversions> with historical
+    // <source>/<target> elements that must be skipped.
+    let mut skip_depth: u32 = 0;
+
     let mut buf = Vec::new();
 
     loop {
         match reader.read_event_into(&mut buf) {
             Ok(Event::Start(ref e)) => {
+                // Skip content inside mq:minorversions (historical versions)
+                let local = e.local_name();
+                if local.as_ref() == b"minorversions" || local.as_ref() == b"historical-unit" {
+                    skip_depth += 1;
+                }
+                if skip_depth > 0 {
+                    // Still need to track depth for proper nesting
+                    buf.clear();
+                    continue;
+                }
                 let local_name = e.local_name();
                 match local_name.as_ref() {
                     b"file" => {
@@ -220,6 +234,16 @@ pub fn parse_xliff(content: &str) -> Result<XliffFile, String> {
             }
             Ok(Event::End(ref e)) => {
                 let local_name = e.local_name();
+                // Track exit from mq:minorversions / mq:historical-unit
+                if local_name.as_ref() == b"minorversions" || local_name.as_ref() == b"historical-unit" {
+                    if skip_depth > 0 {
+                        skip_depth -= 1;
+                    }
+                }
+                if skip_depth > 0 {
+                    buf.clear();
+                    continue;
+                }
                 match local_name.as_ref() {
                     b"trans-unit" => {
                         if in_trans_unit {
@@ -242,10 +266,11 @@ pub fn parse_xliff(content: &str) -> Result<XliffFile, String> {
                     b"bpt" if in_inline_tag.is_some() => {
                         if let Some(InlineTagContext::Bpt { id, ctype }) = in_inline_tag.take() {
                             let tag_type = guess_tag_type(&inline_tag_text, &ctype);
-                            let display = if inline_tag_text.is_empty() {
-                                format!("<bpt id=\"{}\">", id)
+                            // Store full XML element for round-trip saving
+                            let display = if ctype.is_empty() {
+                                format!("<bpt id=\"{}\">{}</bpt>", id, inline_tag_text)
                             } else {
-                                inline_tag_text.clone()
+                                format!("<bpt id=\"{}\" ctype=\"{}\">{}</bpt>", id, ctype, inline_tag_text)
                             };
                             let part = ContentPart::TagOpen { id, tag_type, display };
                             if in_source {
@@ -259,14 +284,15 @@ pub fn parse_xliff(content: &str) -> Result<XliffFile, String> {
                     b"ept" if in_inline_tag.is_some() => {
                         if let Some(InlineTagContext::Ept { id, rid }) = in_inline_tag.take() {
                             let tag_type = guess_tag_type(&inline_tag_text, "");
-                            let display = if inline_tag_text.is_empty() {
-                                format!("<ept id=\"{}\">", id)
+                            // Store full XML element for round-trip saving
+                            let display = if rid.is_empty() {
+                                format!("<ept id=\"{}\">{}</ept>", id, inline_tag_text)
                             } else {
-                                inline_tag_text.clone()
+                                format!("<ept id=\"{}\" rid=\"{}\">{}</ept>", id, rid, inline_tag_text)
                             };
                             // Use rid (reference to bpt) as pairing ID when available,
                             // so {1} opens and {/1} closes — not {/3}
-                            let pair_id = if !rid.is_empty() { rid } else { id };
+                            let pair_id = if !rid.is_empty() { rid.clone() } else { id.clone() };
                             let part = ContentPart::TagClose { id: pair_id, tag_type, display };
                             if in_source {
                                 source_parts.push(part);
@@ -279,10 +305,10 @@ pub fn parse_xliff(content: &str) -> Result<XliffFile, String> {
                     b"ph" if in_inline_tag.is_some() => {
                         if let Some(InlineTagContext::Ph { id, ctype }) = in_inline_tag.take() {
                             let tag_type = guess_tag_type(&inline_tag_text, &ctype);
-                            let display = if inline_tag_text.is_empty() {
-                                format!("<ph id=\"{}\"/>", id)
+                            let display = if ctype.is_empty() {
+                                format!("<ph id=\"{}\">{}</ph>", id, inline_tag_text)
                             } else {
-                                inline_tag_text.clone()
+                                format!("<ph id=\"{}\" ctype=\"{}\">{}</ph>", id, ctype, inline_tag_text)
                             };
                             let part = ContentPart::Standalone { id, tag_type, display };
                             if in_source {
@@ -299,7 +325,7 @@ pub fn parse_xliff(content: &str) -> Result<XliffFile, String> {
                             let display = if inline_tag_text.is_empty() {
                                 format!("<it id=\"{}\" pos=\"{}\"/>", id, pos)
                             } else {
-                                inline_tag_text.clone()
+                                format!("<it id=\"{}\" pos=\"{}\">{}</it>", id, pos, inline_tag_text)
                             };
                             let part = if pos == "close" {
                                 ContentPart::TagClose { id, tag_type, display }
@@ -330,6 +356,10 @@ pub fn parse_xliff(content: &str) -> Result<XliffFile, String> {
                 }
             }
             Ok(Event::Text(ref e)) => {
+                if skip_depth > 0 {
+                    buf.clear();
+                    continue;
+                }
                 let text = e.unescape().unwrap_or_default().to_string();
                 if in_inline_tag.is_some() {
                     // Text inside a bpt/ept/ph/it element — capture for display
@@ -343,6 +373,10 @@ pub fn parse_xliff(content: &str) -> Result<XliffFile, String> {
                 }
             }
             Ok(Event::Empty(ref e)) => {
+                if skip_depth > 0 {
+                    buf.clear();
+                    continue;
+                }
                 let local_name = e.local_name();
                 match local_name.as_ref() {
                     b"target" if in_trans_unit && !in_source => {
@@ -577,5 +611,38 @@ mod tests {
         assert_eq!(seg.source, "Hello bold text end");
         // Parts: "Hello ", TagOpen, "bold text", TagClose, " end"
         assert_eq!(seg.source_parts.len(), 5);
+    }
+
+    #[test]
+    fn test_mqxliff_skips_minorversions() {
+        // MemoQ MQXLIFF files have <mq:minorversions> with historical
+        // <source>/<target> that should NOT create duplicate segments.
+        let xliff = r#"<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:mq="MQXliff">
+  <file original="test.docx" source-language="nl-be" target-language="en-gb" datatype="plaintext">
+    <body>
+      <trans-unit id="1" mq:status="ManuallyConfirmed">
+        <source xml:space="preserve"><bpt id="1" ctype="bold">{}</bpt>TITEL<ept id="1">{}</ept></source>
+        <target xml:space="preserve"><bpt id="1" ctype="bold">{}</bpt>TITLE<ept id="1">{}</ept></target>
+        <mq:minorversions>
+          <mq:historical-unit mq:status="PartiallyEdited">
+            <source xml:space="preserve"><bpt id="1" ctype="bold">{}</bpt>TITEL<ept id="1">{}</ept></source>
+            <target xml:space="preserve">OLD TITLE</target>
+          </mq:historical-unit>
+          <mq:historical-unit mq:status="NotStarted">
+            <source xml:space="preserve"><bpt id="1" ctype="bold">{}</bpt>TITEL<ept id="1">{}</ept></source>
+            <target xml:space="preserve"></target>
+          </mq:historical-unit>
+        </mq:minorversions>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>"#;
+
+        let result = parse_xliff(xliff).unwrap();
+        // Should only have 1 segment, NOT 3
+        assert_eq!(result.segments.len(), 1, "Historical versions should not create extra segments");
+        assert_eq!(result.segments[0].source, "TITEL");
+        assert_eq!(result.segments[0].target, "TITLE");
     }
 }

@@ -3,7 +3,7 @@ title: Changelog
 description: Version history for Supervertaler Workbench 2.0.
 ---
 
-## 2.0.0-alpha.1 – 2026-04-03
+## 0.1.0-alpha.1 – 2026-04-03
 
 ### Added
 

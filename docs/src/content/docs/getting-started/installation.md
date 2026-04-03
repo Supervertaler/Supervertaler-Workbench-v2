@@ -15,9 +15,9 @@ Download the latest release from GitHub:
 
 | Platform | File |
 |----------|------|
-| Windows | `Supervertaler-Workbench_2.0.0_x64-setup.exe` |
-| macOS | `Supervertaler-Workbench_2.0.0_aarch64.dmg` |
-| Linux | `supervertaler-workbench_2.0.0_amd64.AppImage` |
+| Windows | `Supervertaler-Workbench_0.1.0_x64-setup.exe` |
+| macOS | `Supervertaler-Workbench_0.1.0_aarch64.dmg` |
+| Linux | `supervertaler-workbench_0.1.0_amd64.AppImage` |
 
 ## Install
 

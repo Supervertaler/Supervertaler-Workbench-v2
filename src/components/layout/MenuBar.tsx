@@ -64,6 +64,15 @@ export function MenuBar() {
   const tagDisplayMode = useSettingsStore((s) => s.settings.general.tagDisplayMode);
   const updateGeneral = useSettingsStore((s) => s.updateGeneral);
 
+  const handleSave = async () => {
+    try {
+      await invoke('save_project');
+    } catch (err) {
+      console.error('Failed to save project:', err);
+      alert(`Failed to save: ${err}`);
+    }
+  };
+
   const handleOpen = async () => {
     const path = await open({
       filters: [
@@ -135,7 +144,10 @@ export function MenuBar() {
       >
         Open
       </button>
-      <button className="px-3 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+      <button
+        onClick={handleSave}
+        className="px-3 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+      >
         Save
       </button>
       <div className="border-l border-gray-300 dark:border-gray-600 h-5 mx-1" />

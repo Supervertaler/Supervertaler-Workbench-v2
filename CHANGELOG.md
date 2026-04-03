@@ -5,9 +5,7 @@ All notable changes to Supervertaler Workbench 2.0 will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-## [2.0.0-alpha.1] – 2026-04-03
+## [0.1.0-alpha.1] – 2026-04-03
 
 ### Added
 
@@ -40,5 +38,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tailwind CSS v4 via @tailwindcss/vite plugin
 - Rust toolchain: stable-x86_64-pc-windows-msvc
 
-[Unreleased]: https://github.com/Supervertaler/Supervertaler-Workbench-v2/compare/v2.0.0-alpha.1...HEAD
-[2.0.0-alpha.1]: https://github.com/Supervertaler/Supervertaler-Workbench-v2/releases/tag/v2.0.0-alpha.1
+[0.1.0-alpha.1]: https://github.com/Supervertaler/Supervertaler-Workbench-v2/releases/tag/v0.1.0-alpha.1
